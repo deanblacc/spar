@@ -1,8 +1,5 @@
 package com.ragu.resource;
 
-/**
- * Created by nana on 10/9/14.
- */
 public class Card {
     CardValue value;
     Suit suit;
@@ -24,5 +21,10 @@ public class Card {
                 return playedCard;
         }
         return leadCard;
+    }
+
+    public String toString()
+    {
+        return value.toString()+suit.toString();
     }
 }
