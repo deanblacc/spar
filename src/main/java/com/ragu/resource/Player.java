@@ -9,8 +9,11 @@ public class Player {
 
     String username;
     private List<Card> cards;
-    boolean isTurn;
-    boolean hasCards;
+
+    public Player(String username)
+    {
+        this.username = username;
+    }
 
     public void playCard(Card card)
     {
@@ -23,4 +26,7 @@ public class Player {
         return this.cards;
     }
 
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
+    }
 }

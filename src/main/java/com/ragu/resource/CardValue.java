@@ -25,6 +25,16 @@ public enum CardValue {
         this.cardValue = cardValue;
     }
 
+    public static CardValue fromInt(int value)
+    {
+        for(CardValue cardValue : CardValue.values())
+        {
+            if(cardValue.getCardValue() == value)
+                return cardValue;
+        }
+        throw new IllegalArgumentException("Value not a card number");
+    }
+
     public int getCardValue()
     {
         return cardValue;

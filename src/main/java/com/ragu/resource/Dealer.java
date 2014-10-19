@@ -1,11 +1,13 @@
 package com.ragu.resource;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Dealer {
 
     private List<Card> deck;
-    private List<Card> played;
+    private static final int TOP = 0;
 
     public Dealer()
     {
@@ -18,21 +20,42 @@ public class Dealer {
 
     private List<Card> createDeck()
     {
+        deck = new ArrayList<>();
+        for(int x=CardValue.five.getCardValue(); x<CardValue.ace.getCardValue();x++)
+        {
+            deck.add(new Card(CardValue.fromInt(x),Suit.CLUBS));
+            deck.add(new Card(CardValue.fromInt(x),Suit.SPADES));
+            deck.add(new Card(CardValue.fromInt(x),Suit.DIAMONDS));
+            deck.add(new Card(CardValue.fromInt(x),Suit.HEARTS));
+        }
 
-        return null;
+        return deck;
     }
 
 
-    public List<Card> shuffle()
+    public void shuffle()
     {
-        //Take deck and randomize
-        return null;
+        Collections.shuffle(deck);
     }
 
-    public List<Card> share(Player[] players)
+    public void shareCards(Player[] players)
     {
-        //remove from deck and give to user
-        return null;
+        for(Player player : players){
+            player.setCards(shareCards());
+        }
+
+    }
+
+    List<Card>shareCards()
+    {
+        List<Card>cards = new ArrayList<>();
+        for(int x = 0; x<5 ; x++)
+        {
+            cards.add(deck.get(TOP));
+            deck.remove(TOP);
+        }
+        return cards;
+
     }
 
 }
