@@ -1,9 +1,6 @@
 package com.ragu.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
 
@@ -13,6 +10,7 @@ public class Game {
     Player[] players;
     int winner;
     Card leadCard;
+    private boolean hasGameEnded = false;
 
     public Game()
     {
@@ -48,8 +46,11 @@ public class Game {
                     winner = (leadCard != getLeadCard(playedCard)) ? turn : winner;
                     leadCard = getLeadCard(playedCard);
                     getNextPlayerTurn();
+                    if(hasRoundEnded()) {
+                        getNewPlayerTurns();
+                    }
                     //If next player has no cards left end game!!!
-                    if(players[turn].getCards().size()==0)
+                    if(hasGameEnded)
                         break;
                 }
             }
@@ -77,8 +78,22 @@ public class Game {
             counter++;
         }
     }
+//  TODO find max and min compare to get to see if round is done
+    boolean hasRoundEnded(){
+        int max = 0;
+// Arrays.asList(players).stream()
+//                .max(player -> player.getCards().size());
+        int min = 0;
+        if(max == 0 && min == 0) {
+            hasGameEnded = true;
+        }
+        if(max == min) {
+            return true;
+        }
+        return false;
+    }
 
-    void                                                                                                                                                                                                                                                                                 getNewPlayerTurns()
+    void getNewPlayerTurns()
     {
         Player [] newPlayerTurn = new Player[players.length];
         int oldIndex = winner;
