@@ -11,6 +11,7 @@ public class Game {
     int winner;
     Card leadCard;
     private boolean hasGameEnded = false;
+    int id;
 
     public Game()
     {
@@ -78,12 +79,15 @@ public class Game {
             counter++;
         }
     }
-//  TODO find max and min compare to get to see if round is done
     boolean hasRoundEnded(){
-        int max = 0;
-// Arrays.asList(players).stream()
-//                .max(player -> player.getCards().size());
-        int min = 0;
+        int max = Arrays.asList(players).stream()
+                .map(playerCardsLeft -> playerCardsLeft.getCards().size())
+                .max((player1, player2) -> player1 - player2)
+                .get();
+        int min = Arrays.asList(players).stream()
+                .map(playerCardsLeft->playerCardsLeft.getCards().size())
+                .min((player1,player2) -> player1-player2)
+                .get();
         if(max == 0 && min == 0) {
             hasGameEnded = true;
         }
