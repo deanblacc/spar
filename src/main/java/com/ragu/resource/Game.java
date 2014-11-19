@@ -1,32 +1,39 @@
 package com.ragu.resource;
 
+import com.rabbitmq.client.Channel;
+import com.ragu.messaging.Publisher;
+
+import java.io.IOException;
 import java.util.*;
 
 public class Game {
 
-    int turn;
-    List<Card> playedCards;
-    Dealer dealer = new Dealer();
-    Player[] players;
-    int winner;
-    Card leadCard;
+    private int turn;
+    private List<Card> playedCards;
+    private Dealer dealer = new Dealer();
+    private Player[] players;
+    private int winner;
+    private Card leadCard;
     private boolean hasGameEnded = false;
-    int id;
+    private UUID id;
+    private String exchangeName = "Test";
+    Publisher publisher;
+    //TODO Remove exchange name
 
-    public Game()
-    {
+    public Game() throws IOException {
         Player player1 = new Player("player1");
         Player player2 = new Player("player2");
         players = new Player[]{player1, player2};
         playedCards = new ArrayList<>();
+        id = UUID.randomUUID();
+        publisher = new Publisher(exchangeName);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         new Game().run();
     }
 
-    public void run()
-    {
+    public void run() throws IOException {
         dealer.shuffle();
         dealer.shareCards(players);
         turn = getStartPlayer();
@@ -43,12 +50,15 @@ public class Game {
                 if (canPlayCard(leadCard, playedCard, currentPlayer.getCards()))
                 {
                     currentPlayer.playCard(playedCard);
+                    publisher.publishMessage(playedCard.toString());
                     playedCards.add(playedCard);
                     winner = (leadCard != getLeadCard(playedCard)) ? turn : winner;
                     leadCard = getLeadCard(playedCard);
-                    getNextPlayerTurn();
                     if(hasRoundEnded()) {
                         getNewPlayerTurns();
+                    }
+                    else {
+                        getNextPlayerTurn();
                     }
                     //If next player has no cards left end game!!!
                     if(hasGameEnded)
@@ -56,7 +66,9 @@ public class Game {
                 }
             }
         }
+
         System.out.println("The winner is Player " + players[winner].username);
+        publisher.closeAll();
     }
 
     private int validInputFromUser(List<Card>cards) {
@@ -135,7 +147,7 @@ public class Game {
             turn = turn+1;
     }
 
-    private Card  getLeadCard(Card playedCard)
+    private Card getLeadCard(Card playedCard)
     {
         if(leadCard == null)
         {return playedCard;}
@@ -160,6 +172,8 @@ public class Game {
             return true;
         }
     }
+
+
 
 
 }
