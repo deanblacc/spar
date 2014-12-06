@@ -1,4 +1,4 @@
-package com.ragu.resource;
+package com.ragu.spar;
 
 public class Card {
     CardValue value;

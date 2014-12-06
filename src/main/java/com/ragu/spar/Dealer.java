@@ -1,4 +1,4 @@
-package com.ragu.resource;
+package com.ragu.spar;
 
 import java.util.ArrayList;
 import java.util.Collections;

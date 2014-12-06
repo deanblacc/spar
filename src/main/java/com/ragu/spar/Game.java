@@ -1,6 +1,5 @@
-package com.ragu.resource;
+package com.ragu.spar;
 
-import com.rabbitmq.client.Channel;
 import com.ragu.messaging.Publisher;
 
 import java.io.IOException;
@@ -12,26 +11,60 @@ public class Game {
     private List<Card> playedCards;
     private Dealer dealer = new Dealer();
     private Player[] players;
+    private boolean hasGameStarted = false;
     private int winner;
     private Card leadCard;
     private boolean hasGameEnded = false;
     private UUID id;
     private String exchangeName = "Test";
+
+    public List<Card> getPlayedCards() {
+        return playedCards;
+    }
+
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public int getWinner() {
+        return winner;
+    }
+
+    public Card getLeadCard() {
+        return leadCard;
+    }
+
+    public boolean isHasGameEnded() {
+        return hasGameEnded;
+    }
+
+    public String getExchangeName() {
+        return exchangeName;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
     Publisher publisher;
     //TODO Remove exchange name
 
-    public Game() throws IOException {
-        Player player1 = new Player("player1");
-        Player player2 = new Player("player2");
-        players = new Player[]{player1, player2};
+    public Game(Player player) throws IOException {
+        players = new Player[4];
+        players[0] = player;
         playedCards = new ArrayList<>();
         id = UUID.randomUUID();
         publisher = new Publisher(exchangeName);
     }
 
-    public static void main(String[] args) throws IOException {
-        new Game().run();
+    public void addPlayerToGame(Player player){
+        if(!hasGameStarted && players.length<=4){
+            players[players.length-1] = player;
+        }
+
     }
+
 
     public void run() throws IOException {
         dealer.shuffle();
@@ -41,13 +74,13 @@ public class Game {
         while (true)
         {
             Player currentPlayer = players[turn];
-            if(currentPlayer.getCards() != null) {
-                List<Card> cards = currentPlayer.getCards();
+            if(currentPlayer.cards != null) {
+                List<Card> cards = currentPlayer.cards;
                 System.out.println("Play Card using 0-4 Player"+turn);
                 showCards(cards);
                 int playedCardIndex = validInputFromUser(cards);
                 Card playedCard = cards.get(playedCardIndex);
-                if (canPlayCard(leadCard, playedCard, currentPlayer.getCards()))
+                if (canPlayCard(leadCard, playedCard, currentPlayer.cards))
                 {
                     currentPlayer.playCard(playedCard);
                     publisher.publishMessage(playedCard.toString());
@@ -67,7 +100,7 @@ public class Game {
             }
         }
 
-        System.out.println("The winner is Player " + players[winner].username);
+        System.out.println("The winner is Player " + players[winner].getUsername());
         publisher.closeAll();
     }
 
@@ -93,11 +126,11 @@ public class Game {
     }
     boolean hasRoundEnded(){
         int max = Arrays.asList(players).stream()
-                .map(playerCardsLeft -> playerCardsLeft.getCards().size())
+                .map(playerCardsLeft -> playerCardsLeft.cards.size())
                 .max((player1, player2) -> player1 - player2)
                 .get();
         int min = Arrays.asList(players).stream()
-                .map(playerCardsLeft->playerCardsLeft.getCards().size())
+                .map(playerCardsLeft->playerCardsLeft.cards.size())
                 .min((player1,player2) -> player1-player2)
                 .get();
         if(max == 0 && min == 0) {
@@ -172,7 +205,6 @@ public class Game {
             return true;
         }
     }
-
 
 
 

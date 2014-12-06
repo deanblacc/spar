@@ -1,4 +1,4 @@
-package com.ragu.resource;
+package com.ragu.spar;
 
 /**
  * Created by nana on 10/14/14.
