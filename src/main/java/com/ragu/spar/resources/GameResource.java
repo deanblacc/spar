@@ -33,14 +33,41 @@ public class GameResource {
         return Response.status(200).entity(games).build();
     }
 
-    @PUT
-    @Path("{game}")
+    @POST
+    @Path("{gameid}/players")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Game joinGame(@PathParam("game") String game,Player player){
-        Game gameObject = games.get(game);
-        gameObject.addPlayerToGame(player);
-        return  gameObject;
+    public Game joinGame(@PathParam("gameid") String gameid, Player player){
+        Game game = games.get(gameid);
+        game.addPlayerToGame(player);
+        return  game;
+    }
+
+    @PUT
+    @Path("{gameid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response startGame(@PathParam("gameid")String gameid){
+        games.get(gameid).startGame();
+        return  Response.status(200).entity(games.get(gameid).hasGameStarted).build();
+    }
+
+    @GET
+    @Path("{game}/players/{player}/cards")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Card> getCards(@PathParam("game")String game, @PathParam("player")int player){
+        return games.get(game).getPlayers().get(player).getCards();
+    }
+
+    @PUT
+    @Path("{game}/players/{playerid}/cards/{playedCard}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Card> playCard(@PathParam("game")String game, @PathParam("playerid")int playerid,
+                               @PathParam("playedCard") int playedCard) throws IOException {
+        Player player = games.get(game).getPlayers().get(playerid);
+        List<Card>cards = player.getCards();
+        Card card = games.get(game).getCardFromIndex(cards,playedCard);
+        games.get(game).playCard(player,card);
+        return games.get(game).getPlayers().get(playerid).getCards();
     }
 
     @GET
@@ -51,16 +78,9 @@ public class GameResource {
     }
 
     @GET
-    @Path("{game}/players/{player}/cards")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Card> getCards(@PathParam("game")String game, @PathParam("player")int player){
-        return games.get(game).getPlayers()[player].obtainCards();
-    }
-
-    @GET
     @Path("{game}/players/{player}")
     @Produces(MediaType.APPLICATION_JSON)
     public Player getPlayer(@PathParam("game")String game, @PathParam("player")int player){
-        return games.get(game).getPlayers()[player];
+        return games.get(game).getPlayers().get(player);
     }
 }

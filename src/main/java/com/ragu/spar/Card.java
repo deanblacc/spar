@@ -1,8 +1,17 @@
 package com.ragu.spar;
 
 public class Card {
+
     CardValue value;
     Suit suit;
+
+    public Suit getSuit() {
+        return suit;
+    }
+
+    public CardValue getValue() {
+        return value;
+    }
 
     public Card(CardValue value,Suit suit)
     {

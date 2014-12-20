@@ -14,7 +14,11 @@ public class Player {
         return username;
     }
 
-    public List<Card> obtainCards()
+    public void setUsername(String username){
+        this.username = username;
+    }
+
+    public List<Card> getCards()
     {
         return this.cards;
     }
@@ -23,6 +27,7 @@ public class Player {
         this.cards = cards;
     }
 
+    public Player(){}
 
     public Player(String username)
     {

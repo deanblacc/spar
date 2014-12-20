@@ -38,7 +38,7 @@ public class Dealer {
         Collections.shuffle(deck);
     }
 
-    public void shareCards(Player[] players)
+    public void shareCards(List<Player> players)
     {
         for(Player player : players){
             player.setCards(shareCards());
