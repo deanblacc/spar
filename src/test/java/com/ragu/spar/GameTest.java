@@ -59,7 +59,23 @@ public class GameTest {
         player2.setCards(player2Cards);
         game.playCard(player1,player1.cards.get(0));
         game.playCard(player2, player2.cards.get(1));
+    }
 
+    @Test
+    public void allowIfPlayerDoesNotHaveSameSuit() throws SparException, IOException {
+        Player player2 = new Player("player2");
+        game.addPlayerToGame(player2);
+        game.startGame();
+        player1.cards.clear();
+        player2.cards.clear();
+        List<Card> player1Cards = new ArrayList<>();
+        player1Cards.add(new Card(CardValue.six, Suit.CLUBS));
+        List<Card> player2Cards = new ArrayList<>();
+        player2Cards.add(new Card(CardValue.nine, Suit.DIAMONDS));
+        player1.setCards(player1Cards);
+        player2.setCards(player2Cards);
+        game.playCard(player1,player1.cards.get(0));
+        game.playCard(player2, player2.cards.get(0));
     }
 
     @Test
