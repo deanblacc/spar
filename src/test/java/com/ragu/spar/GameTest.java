@@ -1,15 +1,12 @@
 package com.ragu.spar;
 
 import com.ragu.spar.exceptions.SparException;
-import com.ragu.spar.resources.GameResource;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,6 +40,26 @@ public class GameTest {
         game.addPlayerToGame(player2);
         game.startGame();
         assertTrue(game.isGameStarted);
+    }
+
+    @Test(expected = SparException.class)
+    public void throwsSparExceptionWhenPlayerHasLeadCard() throws SparException, IOException {
+        Player player2 = new Player("player2");
+        game.addPlayerToGame(player2);
+        game.startGame();
+        player1.cards.clear();
+        player2.cards.clear();
+        List<Card> player1Cards = new ArrayList<>();
+        player1Cards.add(new Card(CardValue.six, Suit.CLUBS));
+        player1Cards.add(new Card(CardValue.ten, Suit.DIAMONDS));
+        List<Card> player2Cards = new ArrayList<>();
+        player2Cards.add(new Card(CardValue.seven, Suit.CLUBS));
+        player2Cards.add(new Card(CardValue.nine, Suit.DIAMONDS));
+        player1.setCards(player1Cards);
+        player2.setCards(player2Cards);
+        game.playCard(player1,player1.cards.get(0));
+        game.playCard(player2, player2.cards.get(1));
+
     }
 
     @Test
