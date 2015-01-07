@@ -1,33 +1,38 @@
 package com.ragu.spar;
 
 import com.ragu.messaging.Publisher;
+import com.ragu.spar.exceptions.SparException;
 
 import java.io.IOException;
 import java.util.*;
 
 public class Game {
 
-    private int turn;
     private List<Card> playedCards;
+    private Map<Player,Card> playerCardRoundMap;
     private Dealer dealer = new Dealer();
     private List<Player> players;
-    public boolean hasGameStarted = false;
-    private int winner;
+    public boolean isGameStarted = false;
+    private Player winner;
     private Card leadCard;
-    private boolean hasGameEnded = false;
+    private boolean isGameEnded = false;
     private UUID id;
+    private boolean hasLeaderPlayed = false;
     private String exchangeName = "Test";
 
     public List<Card> getPlayedCards() {
         return playedCards;
     }
 
+    public Publisher getPublisher() {
+        return publisher;
+    }
 
     public List<Player> getPlayers() {
         return players;
     }
 
-    public int getWinner() {
+    public Player getWinner() {
         return winner;
     }
 
@@ -35,8 +40,12 @@ public class Game {
         return leadCard;
     }
 
-    public boolean isHasGameEnded() {
-        return hasGameEnded;
+    public boolean isGameEnded() {
+        return isGameEnded;
+    }
+
+    public boolean isGameStarted() {
+        return isGameStarted;
     }
 
     public String getExchangeName() {
@@ -56,92 +65,81 @@ public class Game {
         playedCards = new ArrayList<>();
         id = UUID.randomUUID();
         publisher = new Publisher(exchangeName);
+        playerCardRoundMap = new HashMap<>();
     }
 
-    public void addPlayerToGame(Player player){
-        if(!hasGameStarted && players.size()<=4){
+    public void addPlayerToGame(Player player) throws SparException {
+        if(!isGameStarted && players.size()<=4){
             players.add(player);
+        }
+        else{
+            throw new SparException("Cannot not add anymore players to game");
         }
 
     }
 
+    public void playCard(Player currentPlayer, Card playedCard) throws IOException, SparException {
+        if (winner.equals(currentPlayer)) {
+            hasLeaderPlayed = true;
+        }
+        if (!hasLeaderPlayed) {
+            throw new SparException("Winner needs to play first");
+        }
+        if (hasPlayerPlayed(currentPlayer)) {
+            throw new SparException("Player played already for this round");
+        } else {
+            if (canPlayCard(playedCard, currentPlayer.cards)) {
+                currentPlayer.playCard(playedCard);
+                publisher.publishMessage(playedCard.toString());
+                playedCards.add(playedCard);
+                playerCardRoundMap.put(currentPlayer, playedCard);
+                if (hasRoundEnded()) {
+                    setWinnings();
+                    leadCard = null;
+                    hasLeaderPlayed = false;
+                    playerCardRoundMap.clear();
+                }
+            } else {
+                throw new SparException("Need to play card with the same suit");
+            }
+        }
+    }
 
-
-//    public void run() throws IOException {
-//        dealer.shuffle();
-//        dealer.shareCards(players);
-//        turn = getStartPlayer();
-//        winner = turn;
-//        while (true)
-//        {
-//            Player currentPlayer = players[turn];
-//            if(currentPlayer.cards != null) {
-//                List<Card> cards = currentPlayer.cards;
-//                System.out.println("Play Card using 0-4 Player"+turn);
-//                showCards(cards);
-//                int playedCardIndex = validInputFromUser(cards);
-//                Card playedCard = cards.get(playedCardIndex);
-//                if (canPlayCard(leadCard, playedCard, currentPlayer.cards))
-//                {
-//                    currentPlayer.playCard(playedCard);
-//                    publisher.publishMessage(playedCard.toString());
-//                    playedCards.add(playedCard);
-//                    winner = (leadCard != getLeadCard(playedCard)) ? turn : winner;
-//                    leadCard = getLeadCard(playedCard);
-//                    if(hasRoundEnded()) {
-//                        getNewPlayerTurns();
-//                    }
-//                    else {
-//                        getNextPlayerTurn();
-//                    }
-//                    //If next player has no cards left end game!!!
-//                    if(hasGameEnded)
-//                        break;
-//                }
-//            }
-//        }
-//
-//        System.out.println("The winner is Player " + players[winner].getUsername());
-//        publisher.closeAll();
-//    }
-
-    public boolean playCard(Player currentPlayer, Card playedCard) throws IOException {
-        if (canPlayCard(leadCard, playedCard, currentPlayer.cards))
-        {
-            currentPlayer.playCard(playedCard);
-            publisher.publishMessage(playedCard.toString());
-            playedCards.add(playedCard);
-            winner = (leadCard != getLeadCard(playedCard)) ? turn : winner;
-            leadCard = getLeadCard(playedCard);
-            return true;
+    private boolean hasPlayerPlayed(Player currentPlayer) {
+        for(Player playedPlayer : playerCardRoundMap.keySet()){
+            if(currentPlayer.equals(playedPlayer)){
+                return true;
+            }
         }
         return false;
     }
 
-    public Card getCardFromIndex(List<Card>cards,int playedCard){
+    private void setWinnings() {
+        for(Map.Entry<Player,Card> entry : playerCardRoundMap.entrySet()){
+            Card playedCard = entry.getValue();
+            Card tempCard = getLeadCard(playedCard);
+            if(!tempCard.equals(leadCard)){
+                winner = entry.getKey();
+                leadCard = tempCard;
+            }
+        }
+    }
+
+    public Card getCardFromIndex(List<Card>cards,int playedCard) throws SparException {
         int playedCardIndex = validInputFromUser(cards,playedCard);
         return cards.get(playedCardIndex);
     }
 
-    private int validInputFromUser(List<Card>cards,int playedCardIndex) {
+    private int validInputFromUser(List<Card>cards,int playedCardIndex) throws SparException {
         if(playedCardIndex>=cards.size())
         {
             String message = String.format("%s not a valid card. Try again from 0 to %s",
                     playedCardIndex,cards.size());
-            throw new IllegalArgumentException(message);
+            throw new SparException(message);
         }
         return playedCardIndex;
     }
 
-    private void showCards(List<Card> cards)
-    {
-        int counter = 0;
-        for(Card card : cards)
-        {
-            System.out.println(card.toString() + " -> " + counter);
-            counter++;
-        }
-    }
     boolean hasRoundEnded(){
         int max = players.stream()
                 .map(playerCardsLeft -> playerCardsLeft.cards.size())
@@ -152,17 +150,14 @@ public class Game {
                 .min((player1,player2) -> player1-player2)
                 .get();
         if(max == 0 && min == 0) {
-            hasGameEnded = true;
+            isGameEnded = true;
+            try {
+                publisher.closeAll();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        if(max == min) {
-            return true;
-        }
-        return false;
-    }
-
-    void getNewPlayerTurns()
-    {
-
+        return max == min;
     }
 
     private int getStartPlayer()
@@ -177,14 +172,16 @@ public class Game {
     private Card getLeadCard(Card playedCard)
     {
         if(leadCard == null)
-        {return playedCard;}
+        {
+            return playedCard;
+        }
         else
         {
             return Card.biggerCard(leadCard,playedCard);
         }
     }
 
-    boolean canPlayCard(Card leadCard, Card playedCard, List<Card>remainingCards)
+    boolean canPlayCard(Card playedCard, List<Card>remainingCards)
     {
         if(leadCard == null)
             return true;
@@ -200,11 +197,14 @@ public class Game {
         }
     }
 
-
-    public void startGame() {
+    public void startGame() throws SparException {
+        if(players.size()<2){
+            throw new SparException("Need 2 or more players to start a game");
+        }
         dealer.shuffle();
         dealer.shareCards(players);
-        hasGameStarted = true;
+        isGameStarted = true;
+        winner = players.get(getStartPlayer());
     }
     private void startTimer(){
         int delay =10000;
@@ -212,10 +212,17 @@ public class Game {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                dealer.shuffle();
-                dealer.shareCards(players);
-                hasGameStarted = true;
+                try {
+                    startGame();
+                } catch (SparException e) {
+                    e.printStackTrace();
+                }
             }
         },delay);
     }
+
+    public void endGame() throws IOException {
+        publisher.closeAll();
+    }
+
 }

@@ -3,6 +3,8 @@ package com.ragu.spar.resources;
 import com.ragu.spar.Card;
 import com.ragu.spar.Game;
 import com.ragu.spar.Player;
+import com.ragu.spar.exceptions.SparException;
+import com.ragu.spar.exceptions.SparExceptionMapper;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -37,7 +39,7 @@ public class GameResource {
     @Path("{gameid}/players")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Game joinGame(@PathParam("gameid") String gameid, Player player){
+    public Game joinGame(@PathParam("gameid") String gameid, Player player) throws SparException {
         Game game = games.get(gameid);
         game.addPlayerToGame(player);
         return  game;
@@ -46,28 +48,37 @@ public class GameResource {
     @PUT
     @Path("{gameid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response startGame(@PathParam("gameid")String gameid){
-        games.get(gameid).startGame();
-        return  Response.status(200).entity(games.get(gameid).hasGameStarted).build();
+    public Response startGame(@PathParam("gameid")String gameid) {
+        try {
+            games.get(gameid).startGame();
+            return  Response.status(200).entity(games.get(gameid).isGameStarted).build();
+        } catch (SparException e) {
+            return  Response.status(404).entity(games.get(gameid).isGameStarted).build();
+        }
     }
 
     @GET
-    @Path("{game}/players/{player}/cards")
+    @Path("{gameid}/players/{player}/cards")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Card> getCards(@PathParam("game")String game, @PathParam("player")int player){
-        return games.get(game).getPlayers().get(player).getCards();
+    public List<Card> getCards(@PathParam("gameid")String gameid, @PathParam("player")int player){
+        return games.get(gameid).getPlayers().get(player).getCards();
     }
 
     @PUT
-    @Path("{game}/players/{playerid}/cards/{playedCard}")
+    @Path("{gameid}/players/{playerid}/cards/{playedCard}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Card> playCard(@PathParam("game")String game, @PathParam("playerid")int playerid,
+    public Response playCard(@PathParam("gameid")String gameid, @PathParam("playerid")int playerid,
                                @PathParam("playedCard") int playedCard) throws IOException {
-        Player player = games.get(game).getPlayers().get(playerid);
+        Player player = games.get(gameid).getPlayers().get(playerid);
         List<Card>cards = player.getCards();
-        Card card = games.get(game).getCardFromIndex(cards,playedCard);
-        games.get(game).playCard(player,card);
-        return games.get(game).getPlayers().get(playerid).getCards();
+        Card card = null;
+        try {
+            card = games.get(gameid).getCardFromIndex(cards,playedCard);
+            games.get(gameid).playCard(player,card);
+            return Response.status(200).entity(games.get(gameid).getPlayers().get(playerid).getCards()).build();
+        } catch (SparException e) {
+            return new SparExceptionMapper().toResponse(e);
+        }
     }
 
     @GET

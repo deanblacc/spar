@@ -6,9 +6,6 @@ import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
 
-/**
- * Created by nana on 11/18/14.
- */
 public class Publisher {
 
     private Channel channel;
