@@ -79,14 +79,15 @@ public class Game {
     }
 
     public void playCard(Player currentPlayer, Card playedCard) throws IOException, SparException {
+        if (hasPlayerPlayed(currentPlayer)) {
+            throw new SparException("Player played already for this round");
+        }
         if (winner.equals(currentPlayer)) {
+            leadCard=playedCard;
             hasLeaderPlayed = true;
         }
         if (!hasLeaderPlayed) {
             throw new SparException("Winner needs to play first");
-        }
-        if (hasPlayerPlayed(currentPlayer)) {
-            throw new SparException("Player played already for this round");
         } else {
             if (canPlayCard(playedCard, currentPlayer.cards)) {
                 currentPlayer.playCard(playedCard);
@@ -100,7 +101,9 @@ public class Game {
                     playerCardRoundMap.clear();
                 }
             } else {
-                throw new SparException("Need to play card with the same suit");
+                String message =String.format("Need to play card with the same suit. LeadCard:%s and PlayedCard:%s",
+                leadCard,playedCard);
+                throw new SparException(message);
             }
         }
     }
