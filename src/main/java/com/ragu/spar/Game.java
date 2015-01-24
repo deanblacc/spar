@@ -2,8 +2,11 @@ package com.ragu.spar;
 
 import com.ragu.messaging.Publisher;
 import com.ragu.spar.exceptions.SparException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 public class Game {
@@ -19,6 +22,7 @@ public class Game {
     private UUID id;
     private boolean hasLeaderPlayed = false;
     private String exchangeName = "Test";
+    private Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public List<Card> getPlayedCards() {
         return playedCards;
@@ -71,23 +75,30 @@ public class Game {
     public void addPlayerToGame(Player player) throws SparException {
         if(!isGameStarted && players.size()<=4){
             players.add(player);
+            logger.info("Added player to game");
         }
         else{
-            throw new SparException("Cannot not add anymore players to game");
+            String message = "Cannot not add anymore players to game";
+            logger.error(message);
+            throw new SparException(message);
         }
 
     }
 
     public void playCard(Player currentPlayer, Card playedCard) throws IOException, SparException {
         if (hasPlayerPlayed(currentPlayer)) {
-            throw new SparException("Player played already for this round");
+            String message = "Player played already for this round";
+            logger.warn(message);
+            throw new SparException(message);
         }
         if (winner.equals(currentPlayer)) {
             leadCard=playedCard;
             hasLeaderPlayed = true;
         }
         if (!hasLeaderPlayed) {
-            throw new SparException("Winner needs to play first");
+            String message = "Winner needs to play first";
+            logger.warn(message);
+            throw new SparException(message);
         } else {
             if (canPlayCard(playedCard, currentPlayer.cards)) {
                 currentPlayer.playCard(playedCard);
