@@ -1,1 +1,1 @@
-web: sh build/install/Ragu/bin/start-server server spar.yml
+web: sh build/install/Ragu/bin/Ragu server spar.yml

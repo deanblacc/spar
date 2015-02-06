@@ -33,7 +33,7 @@ dependencies {
     task stage(dependsOn: ['installApp'])<< {
         copy{
             from 'build/install/Ragu/bin/Ragu'
-            into 'build/install/Ragu/bin/start-server'
+            into 'build/install/Ragu/bin/'
             fileMode 0755
         }
     }
