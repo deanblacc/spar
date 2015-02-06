@@ -1,8 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'application'
+
+mainClassName='com.ragu.spar.SparApplication'
 
 group = 'com.ragu'
-version = '1.0-SNAPSHOT'
+version = '0.0.0'
 
 description = """ragu"""
 
