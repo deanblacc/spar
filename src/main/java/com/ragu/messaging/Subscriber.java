@@ -15,7 +15,11 @@ public class Subscriber {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         ConnectionFactory connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost("localhost");
+        connectionFactory.setHost(System.getenv("RABBIT_HOST"));
+        connectionFactory.setPort(Integer.parseInt(System.getenv("RABBIT_CONSUMER_PORT")));
+        connectionFactory.setUsername(System.getenv("RABBIT_USERNAME"));
+        connectionFactory.setPassword((System.getenv("RABBIT_PASSWORD")));
+        connectionFactory.setVirtualHost(System.getenv("RABBIT_VHOST"));
         Connection connection = connectionFactory.newConnection();
         Channel channel = connection.createChannel();
         channel.exchangeDeclare(EXCHANGE_NAME,"fanout");

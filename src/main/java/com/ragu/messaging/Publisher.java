@@ -15,7 +15,11 @@ public class Publisher {
     public Publisher(String exchangeName) throws IOException {
         this.exchangeName = exchangeName;
         ConnectionFactory connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost("localhost");
+        connectionFactory.setHost(System.getenv("RABBIT_HOST"));
+        connectionFactory.setPort(Integer.parseInt(System.getenv("RABBIT_PRODUCER_PORT")));
+        connectionFactory.setUsername(System.getenv("RABBIT_USERNAME"));
+        connectionFactory.setPassword((System.getenv("RABBIT_PASSWORD")));
+        connectionFactory.setVirtualHost(System.getenv("RABBIT_VHOST"));
         connection = connectionFactory.newConnection();
         channel = connection.createChannel();
         channel.exchangeDeclare(exchangeName, "fanout");
