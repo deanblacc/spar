@@ -14,7 +14,6 @@ public class SparApplication extends Application<SparConfiguration> {
 
     @Override
     public void initialize(Bootstrap<SparConfiguration> bootstrap) {
-
     }
 
     @Override
