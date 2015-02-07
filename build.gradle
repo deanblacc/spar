@@ -30,6 +30,19 @@ dependencies {
 
     )
 
-    task stage(dependsOn: ['installApp'])<< {
+    task stage(dependsOn: ['clean','jar'])
+
+    run {
+        args 'server', 'config.yml'
+    }
+    jar {
+        manifest {
+            attributes  'Title': 'Ragu', 'Version': version,'Main-Class': mainClassName
+        }
+        archiveName 'Ragu'
+        dependsOn configurations.runtime
+        from {
+            configurations.compile.collect {it.isDirectory()? it: zipTree(it)}
+        }
     }
 }
