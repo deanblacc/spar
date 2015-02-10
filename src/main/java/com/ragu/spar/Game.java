@@ -22,14 +22,12 @@ public class Game {
     private UUID id;
     private boolean hasLeaderPlayed = false;
     private String exchangeName = "Test";
+    private Publisher publisher;
+
     private Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public List<Card> getPlayedCards() {
         return playedCards;
-    }
-
-    public Publisher getPublisher() {
-        return publisher;
     }
 
     public List<Player> getPlayers() {
@@ -60,7 +58,6 @@ public class Game {
         return id;
     }
 
-    Publisher publisher;
     //TODO Remove exchange name
 
     public Game(Player player) throws IOException {
