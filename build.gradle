@@ -27,22 +27,16 @@ dependencies {
 
     runtime(
             [group:'log4j', name:'log4j', version:'1.2.17']
-
     )
 
-    task stage(dependsOn: ['clean','jar'])
+    task stage(dependsOn: ['clean','installApp'])
 
     run {
-        args 'server', 'config.yml'
+        args 'server', 'spar.yml'
     }
     jar {
         manifest {
-            attributes  'Title': 'Ragu', 'Version': version,'Main-Class': mainClassName
-        }
-        archiveName 'Ragu'
-        dependsOn configurations.runtime
-        from {
-            configurations.compile.collect {it.isDirectory()? it: zipTree(it)}
+            attributes 'Main-Class': mainClassName
         }
     }
 }
