@@ -30,7 +30,7 @@ public class GameResourceTest {
     @After
     public void tearDown() throws Exception {
         for(Map.Entry<String,Game>entry :gameMap.entrySet() ){
-            entry.getValue().getPublisher().closeAll();
+            entry.getValue().endGame();
         }
         gameMap.clear();
     }
