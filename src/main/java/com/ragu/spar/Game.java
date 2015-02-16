@@ -58,6 +58,10 @@ public class Game {
         return id;
     }
 
+    public void setWinner(Player winner){
+        this.winner = winner;
+    }
+
     //TODO Remove exchange name
 
     public Game(Player player) throws IOException {
@@ -67,6 +71,22 @@ public class Game {
         id = UUID.randomUUID();
         publisher = new Publisher(exchangeName);
         playerCardRoundMap = new HashMap<>();
+    }
+
+    public void forfeit(Player player) throws IOException {
+        publisher.publishMessage(player.jsonify());
+        players.remove(player);
+        if(players.size() == 1){
+            winner = players.get(0);
+            //calculate score
+            endGame();
+        }
+        else{
+            if(player == winner){
+                winner = null;
+                endGame();
+            }
+        }
     }
 
     public void addPlayerToGame(Player player) throws SparException {
@@ -109,9 +129,9 @@ public class Game {
                     playerCardRoundMap.clear();
                 }
             } else {
-                String message =String.format("Need to play card with the same suit. LeadCard:%s and PlayedCard:%s",
-                leadCard,playedCard);
-                throw new SparException(message);
+                currentPlayer.hasGbaa = true;
+                publisher.publishMessage(currentPlayer.jsonify());
+                endGame();
             }
         }
     }
@@ -234,6 +254,7 @@ public class Game {
 
     public void endGame() throws IOException {
         publisher.closeAll();
+        isGameEnded = true;
     }
 
 }
