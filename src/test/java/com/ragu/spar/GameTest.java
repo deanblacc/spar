@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -76,6 +77,55 @@ public class GameTest {
         player2.setCards(player2Cards);
         game.playCard(player1,player1.cards.get(0));
         game.playCard(player2, player2.cards.get(0));
+    }
+
+    @Test
+    public void testForfeit() throws SparException, IOException {
+        Player player2 = new Player("player2");
+        game.addPlayerToGame(player2);
+        game.startGame();
+        player1.cards.clear();
+        player2.cards.clear();
+        List<Card> player1Cards = new ArrayList<>();
+        player1Cards.add(new Card(CardValue.six, Suit.CLUBS));
+        List<Card> player2Cards = new ArrayList<>();
+        player2Cards.add(new Card(CardValue.nine, Suit.DIAMONDS));
+        player1.setCards(player1Cards);
+        player2.setCards(player2Cards);
+        game.playCard(player1,player1.cards.get(0));
+        game.forfeit(player1);
+        assertEquals(game.getWinner(),player2);
+    }
+
+    @Test
+    public void gameEndsWhenWinnerForfeits() throws SparException, IOException {
+        Player player2 = new Player("player2");
+        Player player3 = new Player("player3");
+        game.addPlayerToGame(player2);
+        game.addPlayerToGame(player3);
+        game.startGame();
+        player1.cards.clear();
+        player2.cards.clear();
+        player3.cards.clear();
+        game.setWinner(player1);
+        game.forfeit(player1);
+        assertTrue(game.isGameEnded());
+    }
+
+    @Test
+    public void gameDoesntEndWhenNonLeaderForfeits() throws SparException, IOException {
+        Player player2 = new Player("player2");
+        Player player3 = new Player("player3");
+        game.addPlayerToGame(player2);
+        game.addPlayerToGame(player3);
+        game.startGame();
+        player1.cards.clear();
+        player2.cards.clear();
+        player3.cards.clear();
+        game.setWinner(player2);
+        game.forfeit(player1);
+        assertFalse(game.isGameEnded());
+        assertEquals(game.getPlayers().size(),2);
     }
 
     @Test
