@@ -1,13 +1,16 @@
 package com.ragu.spar;
 
-import java.util.List;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 
+import java.util.List;
+import org.json.JSONObject;
 /**
  * Created by nana on 10/9/14.
  */
 public class Player {
 
     private String username;
+    boolean hasGbaa;
     List<Card> cards;
 
     public String getUsername() {
@@ -38,6 +41,14 @@ public class Player {
     {
         cards.remove(card);
 
+    }
+
+    public String jsonify(){
+        JSONObject playerJsonObject = new JSONObject();
+        playerJsonObject.put("username", this.username);
+        playerJsonObject.put("hasGbaa", this.hasGbaa);
+        playerJsonObject.put("cards",this.cards);
+        return playerJsonObject.toString();
     }
 
 
