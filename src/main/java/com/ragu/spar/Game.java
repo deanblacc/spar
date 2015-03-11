@@ -11,7 +11,7 @@ import java.util.*;
 
 public class Game {
 
-    private List<Card> playedCards;
+    private Stack<Card> playedCards;
     private Map<Player,Card> playerCardRoundMap;
     private Dealer dealer = new Dealer();
     private List<Player> players;
@@ -67,7 +67,7 @@ public class Game {
     public Game(Player player) throws IOException {
         players = new ArrayList<>();
         players.add(player);
-        playedCards = new ArrayList<>();
+        playedCards = new Stack<>();
         id = UUID.randomUUID();
         publisher = new Publisher(exchangeName);
         playerCardRoundMap = new HashMap<>();
@@ -130,6 +130,7 @@ public class Game {
                 }
             } else {
                 currentPlayer.hasGbaa = true;
+                //calculate score of gbaa
                 publisher.publishMessage(currentPlayer.jsonify());
                 endGame();
             }
@@ -182,6 +183,7 @@ public class Game {
                 .get();
         if(max == 0 && min == 0) {
             isGameEnded = true;
+            // calculate score
             try {
                 publisher.closeAll();
             } catch (IOException e) {
@@ -255,6 +257,28 @@ public class Game {
     public void endGame() throws IOException {
         publisher.closeAll();
         isGameEnded = true;
+    }
+
+     int calculateScore(){
+        int finalScore = 0;
+        for(int i = 0; i< 4; i++){
+            Card lastCard = winner.playedCards.pop();
+            if(lastCard.isCardDried) {
+                if(lastCard.getValue()== CardValue.six){
+                    finalScore+=4;
+                }
+                else if(lastCard.getValue() == CardValue.seven){
+                    finalScore+=3;
+                }
+            }
+            else{
+                break;
+            }
+        }
+         if(finalScore==0){
+             finalScore+=1;
+         }
+        return finalScore;
     }
 
 }
