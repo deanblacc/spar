@@ -45,6 +45,16 @@ public class GameResource {
         return  game;
     }
 
+    @DELETE
+    @Path("{gameid}/players")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Game forfeitGame(@PathParam("gameid") String gameid, Player player) throws SparException, IOException {
+        Game game = games.get(gameid);
+        game.forfeit(player);
+        return  game;
+    }
+
     @PUT
     @Path("{gameid}")
     @Produces(MediaType.APPLICATION_JSON)
