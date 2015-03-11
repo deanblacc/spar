@@ -4,6 +4,7 @@ public class Card {
 
     CardValue value;
     Suit suit;
+    boolean isCardDried;
 
     public Suit getSuit() {
         return suit;
@@ -13,11 +14,26 @@ public class Card {
         return value;
     }
 
+    public boolean getIsCardDried(){
+        return isCardDried;
+    }
+
     public Card(CardValue value,Suit suit)
     {
         this.value = value;
         this.suit = suit;
+        isCardDried = false;
+    }
 
+    public Card(CardValue value,Suit suit, boolean isCardDried)
+    {
+        this.value = value;
+        this.suit = suit;
+        this.isCardDried = isCardDried;
+    }
+
+    public void dryCard(){
+        this.isCardDried = true;
     }
     public static Card biggerCard(Card leadCard, Card playedCard) {
         if(leadCard.suit == playedCard.suit)
