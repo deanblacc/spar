@@ -142,7 +142,71 @@ public class GameTest {
             }
         }
         assertEquals(player2, game.getWinner());
+    }
 
+    @Test
+    public void playerWinsWithNoDry(){
+        game.setWinner(player1);
+        player1.playedCards.add(new Card(CardValue.six, Suit.CLUBS,true));
+        player1.playedCards.add(new Card(CardValue.ten, Suit.DIAMONDS));
+        player1.playedCards.add(new Card(CardValue.ten, Suit.CLUBS));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.DIAMONDS));
+        player1.playedCards.add(new Card(CardValue.six, Suit.DIAMONDS));
+        assertEquals(1, game.calculateScore());
+    }
+    @Test
+    public void playerWinsWithDrySix(){
+        game.setWinner(player1);
+        player1.playedCards.add(new Card(CardValue.six, Suit.CLUBS,true));
+        player1.playedCards.add(new Card(CardValue.ten, Suit.DIAMONDS));
+        player1.playedCards.add(new Card(CardValue.ten, Suit.CLUBS));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.DIAMONDS));
+        player1.playedCards.add(new Card(CardValue.six, Suit.DIAMONDS,true));
+        assertEquals(4, game.calculateScore());
+    }
+
+    @Test
+    public void playerWinsWithDrySeven(){
+        game.setWinner(player1);
+        player1.playedCards.add(new Card(CardValue.six, Suit.CLUBS,true));
+        player1.playedCards.add(new Card(CardValue.ten, Suit.DIAMONDS));
+        player1.playedCards.add(new Card(CardValue.ten, Suit.CLUBS));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.DIAMONDS));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.HEARTS,true));
+        assertEquals(3,game.calculateScore());
+    }
+
+    @Test
+    public void playerWinsWithDoubleDry(){
+        game.setWinner(player1);
+        player1.playedCards.add(new Card(CardValue.six, Suit.CLUBS,true));
+        player1.playedCards.add(new Card(CardValue.ten, Suit.DIAMONDS));
+        player1.playedCards.add(new Card(CardValue.ten, Suit.CLUBS));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.DIAMONDS,true));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.HEARTS,true));
+        assertEquals(6,game.calculateScore());
+    }
+
+    @Test
+    public void playerWinsWithTripleDry(){
+        game.setWinner(player1);
+        player1.playedCards.add(new Card(CardValue.ten, Suit.CLUBS,true));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.SPADES));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.CLUBS,true));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.DIAMONDS,true));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.HEARTS,true));
+        assertEquals(9,game.calculateScore());
+    }
+
+    @Test
+    public void playerWinsWithQuadrupleDry(){
+        game.setWinner(player1);
+        player1.playedCards.add(new Card(CardValue.ten, Suit.CLUBS,true));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.SPADES,true));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.CLUBS,true));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.DIAMONDS,true));
+        player1.playedCards.add(new Card(CardValue.seven, Suit.HEARTS,true));
+        assertEquals(12,game.calculateScore());
     }
 
     private void shareCards(Player player1, Player player2){
