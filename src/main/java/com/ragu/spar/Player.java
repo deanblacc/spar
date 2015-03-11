@@ -3,6 +3,8 @@ package com.ragu.spar;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import java.util.List;
+import java.util.Stack;
+
 import org.json.JSONObject;
 /**
  * Created by nana on 10/9/14.
@@ -12,6 +14,7 @@ public class Player {
     private String username;
     boolean hasGbaa;
     List<Card> cards;
+    Stack<Card> playedCards = new Stack<>();
 
     public String getUsername() {
         return username;
@@ -39,6 +42,7 @@ public class Player {
 
     public void playCard(Card card)
     {
+        playedCards.push(card);
         cards.remove(card);
 
     }
