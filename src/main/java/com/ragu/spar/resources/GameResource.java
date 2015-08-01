@@ -68,10 +68,10 @@ public class GameResource {
     }
 
     @GET
-    @Path("{gameid}/players/{player}/cards")
+    @Path("{gameid}/players/{playerid}/cards")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Card> getCards(@PathParam("gameid")String gameid, @PathParam("player")int player){
-        return games.get(gameid).getPlayers().get(player).getCards();
+    public List<Card> getCards(@PathParam("gameid")String gameid, @PathParam("playerid")int playerid){
+        return games.get(gameid).getPlayers().get(playerid).getCards();
     }
 
     @PUT
@@ -81,7 +81,7 @@ public class GameResource {
                                @PathParam("playedCard") int playedCard) throws IOException {
         Player player = games.get(gameid).getPlayers().get(playerid);
         List<Card>cards = player.getCards();
-        Card card = null;
+        Card card;
         try {
             card = games.get(gameid).getCardFromIndex(cards,playedCard);
             games.get(gameid).playCard(player,card);

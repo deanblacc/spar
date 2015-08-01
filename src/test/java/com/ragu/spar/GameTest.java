@@ -12,9 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by nana on 1/7/15.
- */
 public class GameTest {
     public static final String PLAYER = "player1";
     Game game;
@@ -43,8 +40,8 @@ public class GameTest {
         assertTrue(game.isGameStarted);
     }
 
-    @Test(expected = SparException.class)
-    public void throwsSparExceptionWhenPlayerHasLeadCard() throws SparException, IOException {
+    @Test
+    public void gameEndsWhenPlayerGbaa() throws SparException, IOException {
         Player player2 = new Player("player2");
         game.addPlayerToGame(player2);
         game.startGame();
@@ -60,6 +57,7 @@ public class GameTest {
         player2.setCards(player2Cards);
         game.playCard(player1,player1.cards.get(0));
         game.playCard(player2, player2.cards.get(1));
+        assertTrue(game.isGameEnded());
     }
 
     @Test
