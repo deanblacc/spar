@@ -1,0 +1,87 @@
+#%RAML 0.8
+title: Please type API title here
+baseUri: http://localhost:9000/api/v1
+protocols: [ HTTP, HTTPS ]
+/games: 
+  get:
+    description: Get all games on the server
+    responses: 
+      200: 
+        body: 
+          application/json: 
+  post:
+    description: Create new game
+    body: 
+      application/json:
+        example: |
+          {
+            "username" : "player_1"
+          }
+    responses: 
+      200: 
+        body: 
+          application/json: 
+  /{gameid}: 
+    put:
+      description: Start a game 
+      responses: 
+        200: 
+          body: 
+            application/json: 
+    /players: 
+      post:
+        description: Join game
+        body: 
+          application/json: 
+            example: |
+              {
+                "username" | "player_2"
+              }
+        responses: 
+          200: 
+            body: 
+              application/json: 
+      delete: 
+        description: Forfeit Game
+        body: 
+          application/json: 
+        responses: 
+          200: 
+            body: 
+              application/json: 
+      /{playerid}:
+        /cards:
+          get: 
+            description: Show player cards
+            responses: 
+              200: 
+                body: 
+                  application/json: 
+          /{playedCard}: 
+            put: 
+              description: Play Cards
+              responses: 
+                200: 
+                  body: 
+                    application/json: 
+  /{game}: 
+    get:
+      description: Get game details
+      responses: 
+        200: 
+          body: 
+            application/json: 
+    /players: 
+      /{player}: 
+        get: 
+          description: Get player details
+          responses: 
+            200: 
+              body: 
+                application/json: 
+/players: 
+  /{player}: 
+    post: 
+      description: Create new player
+      responses: 
+        200:
