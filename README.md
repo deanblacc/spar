@@ -1,4 +1,3 @@
-#Spar
 
 Spar is a card game (from ghana). Wrote this to learn how to design RESTful system. So far written only the server side code. Client side code for iOS, Android and the web is yet to be written.
 
@@ -69,3 +68,28 @@ curl -XPUT https://localhost:9000/games/{gameid}/players/{playerid}/cards/{playe
 ```bash
 curl -XGET https://localhost:9000/games/{game}/players/{player}
 ```
+=======
+Spar is a card game (from ghana). This project I am playing around with dropwizard for my REST service and rabbitmq for messaging.
+
+Request:
+{
+"username":"Nana Kwesi"
+}
+
+Response
+{
+playedCards: [0]
+players: [1]
+0:  {
+username: "Nana Kwesi"
+cards: null
+}-
+-
+isGameStarted: false
+winner: null
+leadCard: null
+id: "0480b1ab-968e-4d4a-936e-c265f0cebc64"
+exchangeName: "Test"
+gameStarted: false
+gameEnded: false
+}
