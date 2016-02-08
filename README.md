@@ -1,5 +1,5 @@
 
-Spar is a card game (from ghana). Wrote this to learn how to design RESTful system. So far written only the server side code. Client side code for iOS, Android and the web is yet to be written.
+Spar is a card game (from ghana). Wrote this to learn how to design RESTful system. So far written only the server side code. Client side code for iOS has been started and incompleted, Android and the web is yet to be written.
 
 ##Technologies Used
 #### Dropwizard 
