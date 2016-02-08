@@ -18,5 +18,8 @@ Spar is a card game (from ghana). Wrote this to learn how to design RESTful syst
 * To display list of API commands. Note the console is purposely pointed against localhost instead of my heroku instance in order not to execute against my prod instance.  
 
 ##How to use
-* The API can be seen here http://www.gamegbee.com/. 
+* The API can be seen here http://www.gamegbee.com/.
 
+![alt tag](https://github.com/npeprah/spar/blob/master/images/SparScreenShot.png)
+
+![alt tag](https://github.com/npeprah/spar/blob/master/images/SparIphone.png)
