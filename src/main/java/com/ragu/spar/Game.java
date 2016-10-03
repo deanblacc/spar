@@ -261,10 +261,13 @@ public class Game {
 
      int calculateScore(){
         int finalScore = 0;
+        Card lastCard = null;
+         
         for(int i = 0; i< 4; i++){
-            Card lastCard = winner.playedCards.pop();
+            lastCard = winner.playedCards.pop();
+            
             if(lastCard.isCardDried) {
-                if(lastCard.getValue()== CardValue.six){
+                if(lastCard.getValue() == CardValue.six){
                     finalScore+=4;
                 }
                 else if(lastCard.getValue() == CardValue.seven){
